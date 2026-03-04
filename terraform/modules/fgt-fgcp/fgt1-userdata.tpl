@@ -1,0 +1,219 @@
+Content-Type: multipart/mixed; boundary="==Boundary=="
+MIME-Version: 1.0
+
+--==Boundary==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment; filename="config"
+
+config system vdom-exception
+edit 1
+set object system.interface
+next
+edit 2
+set object router.bgp
+next
+edit 3
+set object router.static
+next
+end
+config system global
+set hostname Fgt1
+set admintimeout 60
+end
+%{ if private_ec2_api == "true" }
+config system dns
+set primary 169.254.169.253
+unset secondary
+unset protocol
+unset server-select-method
+end
+%{ endif }
+config system interface
+edit port1
+set mode static
+set ip ${fgt1_public_ip}
+set allowaccess https ping ssh fgfm
+set alias public
+next
+edit port2
+set mode static
+set ip ${fgt1_private_ip}
+set allowaccess ping
+set alias private
+next
+edit port3
+set mode static
+set ip ${fgt1_hamgmt_ip}
+set allowaccess https ping ssh
+set alias hamgmt
+next
+end
+config router static
+edit 1
+set device port1
+set gateway ${public_subnet_intrinsic_router_ip}
+next
+edit 2
+set device port2
+set dst ${vpc_cidr}
+set gateway ${private_subnet_intrinsic_router_ip}
+next
+edit 3
+set device port2
+set dst ${cwan_connect_cidr}
+set gateway ${private_subnet_intrinsic_router_ip}
+next
+end
+
+config router prefix-list
+edit pflist-match-any
+config rule
+edit 1
+set prefix any
+unset ge
+unset le
+set action permit
+next
+end
+end
+
+config router route-map
+edit rmap-aspath1
+config rule
+edit 1
+set match-ip-address pflist-match-any
+set set-aspath-action prepend
+set set-aspath ${fgt_bgp_asn}
+unset set-ip-nexthop
+unset set-ip6-nexthop
+unset set-ip6-nexthop-local
+unset set-originator-id
+next
+end
+next
+edit rmap-aspath2
+config rule
+edit 1
+set match-ip-address pflist-match-any
+set set-aspath-action prepend
+set set-aspath ${fgt_bgp_asn} ${fgt_bgp_asn}
+unset set-ip-nexthop
+unset set-ip6-nexthop
+unset set-ip6-nexthop-local
+unset set-originator-id
+next
+end
+next
+end
+
+config router bgp
+set as ${fgt_bgp_asn}
+set router-id ${fgt_bgp_rid}
+set ebgp-multipath enable
+config neighbor
+edit ${cwan_peer_core_network_address1}
+set ebgp-enforce-multihop enable
+set ebgp-multihop-ttl 2
+set remote-as ${cwan_bgp_asn}
+set route-map-out rmap-aspath1
+set capability-default-originate enable
+set default-originate-routemap rmap-aspath1
+set advertisement-interval 1
+set keep-alive-timer 3
+set holdtime-timer 9
+set connect-timer 9
+set soft-reconfiguration enable
+next
+edit ${cwan_peer_core_network_address2}
+set ebgp-enforce-multihop enable
+set ebgp-multihop-ttl 2
+set remote-as ${cwan_bgp_asn}
+set route-map-out rmap-aspath1
+set capability-default-originate enable
+set default-originate-routemap rmap-aspath1
+set advertisement-interval 1
+set keep-alive-timer 3
+set holdtime-timer 9
+set connect-timer 9
+set soft-reconfiguration enable
+next
+end
+end
+
+config firewall policy
+edit 1
+set name "egress_access"
+set srcintf "port2"
+set dstintf "port1"
+set srcaddr "all"
+set dstaddr "all"
+set action accept
+set schedule "always"
+set service "ALL"
+set logtraffic all
+set nat enable
+next
+edit 2
+set name "east-west_access"
+set srcintf "port2"
+set dstintf "port2"
+set srcaddr "all"
+set dstaddr "all"
+set action accept
+set schedule "always"
+set service "ALL"
+set logtraffic all
+next
+end
+
+config system sdn-connector
+edit "aws-instance-role"
+set status enable
+set type aws
+set use-metadata-iam enable
+set alt-resource-ip enable
+next
+end
+
+config system ha
+set group-name group1
+set mode a-p
+set hbdev port3 50
+set session-pickup enable
+set ha-mgmt-status enable
+config ha-mgmt-interface
+edit 1
+set interface port3
+set gateway ${hamgmt_subnet_intrinsic_router_ip}
+next
+end
+set override disable
+set priority 255
+set unicast-hb enable
+set unicast-hb-peerip ${fgt2_hamgmt_ip}
+set ha-uptime-diff-margin 60
+set route-ttl 30
+set password ${ha_pass}
+end
+
+%{ if license_type == "byol" }
+--==Boundary==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment; filename="license"
+
+${file(license_file)}
+%{ endif }
+%{ if license_type == "flex" }
+--==Boundary==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment; filename="license"
+
+LICENSE-TOKEN: ${license_token}
+%{ endif }
+--==Boundary==--

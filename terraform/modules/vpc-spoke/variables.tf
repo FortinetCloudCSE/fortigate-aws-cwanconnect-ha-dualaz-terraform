@@ -1,0 +1,14 @@
+variable "access_key" {}
+variable "secret_key" {}
+variable "region" {}
+variable "availability_zone1" {}
+variable "availability_zone2" {}
+variable "vpc_cidr" {}
+variable "private_subnet_cidr1" {}
+variable "private_subnet_cidr2" {}
+variable "tag_name_prefix" {}
+variable "tag_name_unique" {}
+variable "cwan_creation" {}
+variable "cwan_id" {}
+variable "cwan_segment" {}
+variable "cwan_policy_state" {}
