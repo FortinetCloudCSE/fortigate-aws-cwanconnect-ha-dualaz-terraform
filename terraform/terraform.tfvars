@@ -4,9 +4,19 @@ Any variables in variables.tf can be overriden here.
 Overriding variables here keeps the variables.tf as a clean local reference.
 */
 
-# Provide the credentials to access the AWS account
-access_key = ""
-secret_key = ""
+/*
+Credentials are automatically detected from standard AWS authentication means:
+ - AWS creds file used with AWS CLI (~/.aws/credentials)
+ - Environment variables (AWSACCESSKEYID, AWSSECRETACCESSKEY)
+ - IAM Roles (preferred for EC2, ECS)
+ - AWS SSO (aws sso login)
+If none of these are available to you, you can provide the credentials directly below (uncomment access_key, secret_key and provide values).
+!!! However this is considered a security anti-pattern. !!!
+For more documentation on how to authenticate, reference the link below:
+  https://registry.terraform.io/providers/hashicorp/aws/latest/docs#authentication-and-configuration
+*/
+#access_key = ""
+#secret_key = ""
 
 # Specify the region and AZs to use.
 region = ""
