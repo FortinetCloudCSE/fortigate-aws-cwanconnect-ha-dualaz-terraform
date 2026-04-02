@@ -10,10 +10,8 @@ locals {
 }
 
 module "cloud-wan" {
-  source = ".//modules/cwan"
+  source = "./modules/cwan"
   count = local.create_cwan
-  access_key = var.access_key
-  secret_key = var.secret_key
   region = var.region
   cwan_connect_cidr = var.cwan_connect_cidr
   cwan_bgp_asn = var.cwan_bgp_asn
@@ -22,9 +20,7 @@ module "cloud-wan" {
 }
 
 module "inspection-vpc" {
-  source = ".//modules/vpc-inspection"
-  access_key = var.access_key
-  secret_key = var.secret_key
+  source = "./modules/vpc-inspection"
   region = var.region
   
   availability_zone1 = var.availability_zone1
@@ -54,9 +50,7 @@ module "inspection-vpc" {
 }
 
 module "fgcp" {
-  source = ".//modules/fgt-fgcp"
-  access_key = var.access_key
-  secret_key = var.secret_key
+  source = "./modules/fgt-fgcp"
   region = var.region
 
   availability_zone1 = var.availability_zone1
@@ -105,10 +99,8 @@ module "fgcp" {
 }
 
 module "spoke-vpc1" {
-  source = ".//modules/vpc-spoke"
+  source = "./modules/vpc-spoke"
   count = local.create_cwan
-  access_key = var.access_key
-  secret_key = var.secret_key
   region = var.region
   
   availability_zone1 = var.availability_zone1
@@ -126,10 +118,8 @@ module "spoke-vpc1" {
 }
 
 module "spoke-vpc2" {
-  source = ".//modules/vpc-spoke"
+  source = "./modules/vpc-spoke"
   count = local.create_cwan
-  access_key = var.access_key
-  secret_key = var.secret_key
   region = var.region
   
   availability_zone1 = var.availability_zone1

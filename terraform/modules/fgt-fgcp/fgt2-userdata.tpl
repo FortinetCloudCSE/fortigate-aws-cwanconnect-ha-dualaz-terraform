@@ -18,6 +18,9 @@ edit 3
 set object router.static
 next
 end
+config system settings
+set allow-subnet-overlap enable
+end
 config system global
 set hostname Fgt2
 set admintimeout 60
