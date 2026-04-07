@@ -1,11 +1,3 @@
-variable "access_key" {
-  type    = string
-  default = ""
-}
-variable "secret_key" {
-  type    = string
-  default = ""
-}
 variable "region" {
   description = "Provide the region to deploy the VPC in"
   type        = string
