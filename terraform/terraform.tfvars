@@ -10,16 +10,11 @@ Credentials are automatically detected from standard AWS authentication means:
  - Environment variables (AWSACCESSKEYID, AWSSECRETACCESSKEY)
  - IAM Roles (preferred for EC2, ECS)
  - AWS SSO (aws sso login)
-If none of these are available to you, you can provide the credentials directly below (uncomment access_key, secret_key and provide values).
-!!! However this is considered a security anti-pattern. !!!
-For more documentation on how to authenticate, reference the link below:
-  https://registry.terraform.io/providers/hashicorp/aws/latest/docs#authentication-and-configuration
+For more documentation on how to authenticate, reference the link below: https://registry.terraform.io/providers/hashicorp/aws/latest/docs#authentication-and-configuration
 */
-#access_key = ""
-#secret_key = ""
 
 # Specify the region and AZs to use.
-region = ""
+region             = ""
 availability_zone1 = ""
 availability_zone2 = ""
 
@@ -27,9 +22,9 @@ availability_zone2 = ""
 To deploy a new CWAN and two spoke VPCs, specify 'yes'.
 Otherwise, specify 'no' and provide the values for the existing CWAN to attach to
 */
-cwan_creation = "yes"
-cwan_existing_id = ""
-cwan_existing_segment_key = ""
+cwan_creation               = "yes"
+cwan_existing_id            = ""
+cwan_existing_segment_key   = ""
 cwan_existing_segment_value = ""
 
 # Specify the name of the keypair that the FGTs will use.
@@ -57,8 +52,8 @@ Otherwise, leave these as empty strings.
 fgt1_fortiflex_token = "1A2B3C4D5E6F7G8H9I0J"
 fgt2_fortiflex_token = "2B3C4D5E6F7G8H9I0J1K"
 */
-license_type = "payg"
-fgt1_byol_license = ""
-fgt2_byol_license = ""
+license_type         = "payg"
+fgt1_byol_license    = ""
+fgt2_byol_license    = ""
 fgt1_fortiflex_token = ""
 fgt2_fortiflex_token = ""
